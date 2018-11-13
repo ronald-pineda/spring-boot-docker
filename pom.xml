@@ -71,8 +71,8 @@
 
 				<configuration>
 
-                    <!--<dockerHost>http://127.0.0.1:2375</dockerHost>-->
-                    <dockerHost>unix:///var/run/docker.sock</dockerHost>
+                    <dockerHost>https://192.168.99.100:2376</dockerHost>
+<!--                     <dockerHost>unix:///var/run/docker.sock</dockerHost> -->
 
                     <verbose>true</verbose>
 					<images>
@@ -108,7 +108,7 @@
 						</image>
                         <!--mysql container-->
 						<image>
-							<name>mysql</name>
+							<name>mysql:5.7.24</name>
                             <alias>mysqldb</alias>
 							<run>
                                 <!--expose port for dn-->
@@ -118,7 +118,7 @@
                                 <!--set env prams for mysql image-->
                                 <env>
                                     <MYSQL_DATABASE>pageviewservice</MYSQL_DATABASE>
-                                    <MYSQL_ALLOW_EMPTY_PASSWORD>yes</MYSQL_ALLOW_EMPTY_PASSWORD>
+                                    <MYSQL_ROOT_PASSWORD>password</MYSQL_ROOT_PASSWORD>
                                 </env>
                                 <!--wait for db to start-->
                                 <wait>
@@ -159,7 +159,7 @@
                                     <link>mysqldb:mysqldb</link>
                                 </links>
                                 <env>
-                                    <SPRING_DATASOURCE_URL>jdbc:mysql://mysqldb:3306/pageviewservice</SPRING_DATASOURCE_URL>
+                                    <SPRING_DATASOURCE_URL>jdbc:mysql://mysqldb:3306/pageviewservice?useSSL=false</SPRING_DATASOURCE_URL>
                                     <SPRING_PROFILES_ACTIVE>mysql</SPRING_PROFILES_ACTIVE>
                                     <SPRING_RABBITMQ_HOST>rabbitmq</SPRING_RABBITMQ_HOST>
                                 </env>
@@ -169,7 +169,7 @@
                                 </dependsOn>
                                 <wait>
                                     <http>
-                                        <url>http://localhost:8081/health</url>
+                                        <url>http://192.168.99.100:8081/actuator/health</url>
                                         <method>GET</method>
                                         <status>200..399</status>
                                     </http>
