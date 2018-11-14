@@ -2,13 +2,13 @@ version: '3'
 
 services:
   mysqldb:
-    image: mysql
+    image: mysql:5.7.24
     restart: always
     ports:
       - '3306:3306'
     environment:
       MYSQL_DATABASE: pageviewservice
-      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_ROOT_PASSWORD: password
 
   rabbitmq:
     image: rabbitmq
@@ -28,11 +28,11 @@ services:
       - mysqldb
       - rabbitmq
     environment:
-      SPRING_DATASOURCE_URL: 'jdbc:mysql://mysqldb:3306/pageviewservice'
+      SPRING_DATASOURCE_URL: 'jdbc:mysql://mysqldb:3306/pageviewservice?useSSL=false'
       SPRING_PROFILES_ACTIVE: 'mysql'
       SPRING_RABBITMQ_HOST: rabbitmq
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+      test: ["CMD", "curl", "-f", "http://192.168.99.100:8081/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -48,7 +48,7 @@ services:
     environment:
       SPRING_RABBITMQ_HOST: rabbitmq
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      test: ["CMD", "curl", "-f", "http://192.168.99.100:8080"]
       interval: 30s
       timeout: 10s
       retries: 3
